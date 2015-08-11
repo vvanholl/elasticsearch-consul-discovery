@@ -1,14 +1,18 @@
-SRV Discovery Plugin for Elasticsearch
+Consul Based Discovery Plugin for Elasticsearch
 ======================================
 
-Use SRV records for Elasticsearch discovery, like the ones
-[Consul](https://consul.io) provides.
+Uses [Consul](https://consul.io) API for Elasticsearch discovery
+
 
 ## Configuration
 
 ```
 discovery:
-  type: srv
-  srv:
-    query: elasticsearch-transport.service.consul
+  type: consul
+  consul:
+    service-name: CONSUL_SERVICE_NAME
+    tag:  OPTIONAL_TAG_TO_FILTER_NODES
+    local-ws-port:  OPTIONAL_TO_SPECIFY_LOCAL_HTTP_API_PORT_FOR_CONSUL_DEFAULT_IS_8500
+
+
 ```

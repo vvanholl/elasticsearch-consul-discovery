@@ -20,7 +20,7 @@
  *     OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.elasticsearch.discovery.srv;
+package org.elasticsearch.discovery.consul;
 
 import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.settings.Settings;
@@ -30,15 +30,15 @@ import org.elasticsearch.discovery.zen.ZenDiscoveryModule;
 /**
  *
  */
-public class SrvDiscoveryModule extends ZenDiscoveryModule {
+public class ConsulDiscoveryModule extends ZenDiscoveryModule {
 
     @Inject
-    public SrvDiscoveryModule(Settings settings) {
-        addUnicastHostProvider(SrvUnicastHostsProvider.class);
+    public ConsulDiscoveryModule(Settings settings) {
+        addUnicastHostProvider(ConsulUnicastHostsProvider.class);
     }
 
     @Override
     protected void bindDiscovery() {
-        bind(Discovery.class).to(SrvDiscovery.class).asEagerSingleton();
+        bind(Discovery.class).to(ConsulDiscovery.class).asEagerSingleton();
     }
 }

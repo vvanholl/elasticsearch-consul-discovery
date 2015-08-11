@@ -20,7 +20,7 @@
  *     OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.elasticsearch.discovery.srv;
+package org.elasticsearch.discovery.consul;
 
 import org.elasticsearch.cluster.ClusterName;
 import org.elasticsearch.cluster.ClusterService;
@@ -39,13 +39,13 @@ import org.elasticsearch.transport.TransportService;
 /**
  *
  */
-public class SrvDiscovery extends ZenDiscovery {
+public class ConsulDiscovery extends ZenDiscovery {
 
     @Inject
-    public SrvDiscovery(Settings settings, ClusterName clusterName, ThreadPool threadPool, TransportService transportService,
-                        ClusterService clusterService, NodeSettingsService nodeSettingsService, ZenPingService pingService,
-                        DiscoveryNodeService discoveryNodeService,DiscoverySettings discoverySettings,
-                        ElectMasterService electMasterService, DynamicSettings dynamicSettings) {
+    public ConsulDiscovery(Settings settings, ClusterName clusterName, ThreadPool threadPool, TransportService transportService,
+                           ClusterService clusterService, NodeSettingsService nodeSettingsService, ZenPingService pingService,
+                           DiscoveryNodeService discoveryNodeService, DiscoverySettings discoverySettings,
+                           ElectMasterService electMasterService, DynamicSettings dynamicSettings) {
         super(settings, clusterName, threadPool, transportService, clusterService, nodeSettingsService,
                 discoveryNodeService, pingService, electMasterService, discoverySettings, dynamicSettings);
     }

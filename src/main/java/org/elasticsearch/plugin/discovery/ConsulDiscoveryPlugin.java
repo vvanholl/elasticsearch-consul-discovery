@@ -25,22 +25,22 @@ package org.elasticsearch.plugin.discovery;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.plugins.AbstractPlugin;
 
-public class SrvDiscoveryPlugin extends AbstractPlugin {
+public class ConsulDiscoveryPlugin extends AbstractPlugin {
 
     private final Settings settings;
 
-    public SrvDiscoveryPlugin(Settings settings) {
+    public ConsulDiscoveryPlugin(Settings settings) {
         this.settings = settings;
     }
 
     @Override
     public String name() {
-        return "srv-discovery";
+        return "consul-discovery";
     }
 
     @Override
     public String description() {
-        return "SRV Discovery Plugin";
+        return "Consul Discovery Plugin";
     }
 
 

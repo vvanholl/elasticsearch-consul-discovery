@@ -19,8 +19,8 @@
             <useProjectArtifact>true</useProjectArtifact>
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <includes>
-                <include>dnsjava:dnsjava</include>
+                <include>com.google.code.gson:gson</include>
             </includes>
         </dependencySet>
     </dependencySets>
-</assembly>                                                     ˜
+</assembly>
