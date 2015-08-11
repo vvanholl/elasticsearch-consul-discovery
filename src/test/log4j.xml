@@ -24,13 +24,13 @@ governing permissions and limitations under the License. -->
         <level value="info" />
     </logger>
 
-    <logger name="org.org.elasticsearch.cloud.aws">
+    <logger name="org.elasticsearch.cloud.aws">
         <level value="trace" />
     </logger>
-    <logger name="org.org.elasticsearch.discovery.aws">
+    <logger name="org.elasticsearch.discovery.aws">
         <level value="trace" />
     </logger>
-    <logger name="org.org.elasticsearch.repositories.aws">
+    <logger name="org.elasticsearch.repositories.aws">
         <level value="trace" />
     </logger>
 
