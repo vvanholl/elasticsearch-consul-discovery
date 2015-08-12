@@ -53,4 +53,33 @@ public class Service {
 		this.Tags = Tags;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Service service = (Service) o;
+
+		if (Address != null ? !Address.equals(service.Address) : service.Address != null)
+			return false;
+		if (ID != null ? !ID.equals(service.ID) : service.ID != null) return false;
+		if (Port != null ? !Port.equals(service.Port) : service.Port != null)
+			return false;
+		if (Service != null ? !Service.equals(service.Service) : service.Service != null)
+			return false;
+		if (Tags != null ? !Tags.equals(service.Tags) : service.Tags != null)
+			return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = Address != null ? Address.hashCode() : 0;
+		result = 31 * result + (ID != null ? ID.hashCode() : 0);
+		result = 31 * result + (Port != null ? Port.hashCode() : 0);
+		result = 31 * result + (Service != null ? Service.hashCode() : 0);
+		result = 31 * result + (Tags != null ? Tags.hashCode() : 0);
+		return result;
+	}
 }
