@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Uses consul's REST API and exposes certain functionality
  * Created by jigar.joshi on 8/9/15.
  */
 public final class ConsulService {
