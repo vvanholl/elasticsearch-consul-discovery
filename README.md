@@ -18,5 +18,5 @@ discovery:
 ```
 
 
-This plugin is based on https://github.com/grantr/elasticsearch-srv-discovery and
+This plugin is based on https://github.com/grantr/elasticsearch-srv-discovery and
 modified to be based on consul API calls instead of DNS records.
