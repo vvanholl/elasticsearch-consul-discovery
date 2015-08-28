@@ -60,6 +60,7 @@ import org.elasticsearch.discovery.zen.ping.unicast.UnicastHostsProvider;
 import org.elasticsearch.transport.TransportService;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -68,7 +69,7 @@ public class ConsulUnicastHostsProvider extends AbstractComponent implements Uni
 
 	private final TransportService transportService;
 	private final Version version;
-	private final String consulServiceName;
+	private final Set<String> consulServiceNames;
 	private final int consulAgentLocalWebServicePort;
 	private final String tag;
 
@@ -78,7 +79,12 @@ public class ConsulUnicastHostsProvider extends AbstractComponent implements Uni
 		super(settings);
 		this.transportService = transportService;
 		this.version = version;
-		this.consulServiceName = settings.get("discovery.consul.service-name");
+		this.consulServiceNames = new HashSet<>();
+
+		final String[] serviceNamesArray = settings.getAsArray("discovery.consul.service-names");
+		for (String serviceName : serviceNamesArray) {
+			this.consulServiceNames.add(serviceName);
+		}
 		this.consulAgentLocalWebServicePort = settings.getAsInt("discovery.consul" +
 				".local-ws-port", 8500);
 		this.tag = settings.get("discovery.consul.tag");
@@ -94,7 +100,11 @@ public class ConsulUnicastHostsProvider extends AbstractComponent implements Uni
 		try {
 			consulDiscoveryResults = new ConsulService(this
 					.consulAgentLocalWebServicePort, this.tag)
-					.discoverHealthyNodes(this.consulServiceName);
+					.discoverHealthyNodes(this.consulServiceNames);
+			if (logger.isTraceEnabled()) {
+				logger.trace("discovered {} nodes", (consulDiscoveryResults != null ?
+						consulDiscoveryResults.size() : 0));
+			}
 		} catch (IOException ioException) {
 			logger.error("Failed to discover nodes, failed in making consul based " +
 					"discovery", ioException);

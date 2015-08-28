@@ -10,7 +10,7 @@ Uses [Consul](https://consul.io) API for Elasticsearch discovery
 discovery:
   type: consul
   consul:
-    service-name: CONSUL_SERVICE_NAME
+    service-names: ["CONSUL_SERVICE_NAME1", "CONSUL_SERVICE_NAME2"]
     tag:  OPTIONAL_TAG_TO_FILTER_NODES
     local-ws-port:  OPTIONAL_TO_SPECIFY_LOCAL_HTTP_API_PORT_FOR_CONSUL_DEFAULT_IS_8500
 
