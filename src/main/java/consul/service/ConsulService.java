@@ -56,9 +56,8 @@ import java.util.Set;
 
 /**
  * Uses consul's REST API and exposes certain functionality
- *
- * Created by Jigar Joshi on
- * 8/9/15.
+ * <p/>
+ * Created by Jigar Joshi on 8/9/15.
  */
 
 public final class ConsulService {
@@ -69,8 +68,8 @@ public final class ConsulService {
 	private final String tag;
 
 	/**
-	 * @param consulPort port where the consul agent on node exposes HTTP API, by
-	 *                   default it is 8500
+	 * @param consulPort port where the consul agent on node exposes HTTP API, by default
+	 *                   it is 8500
 	 * @param tag        if not null it will filter query on the tags
 	 */
 	public ConsulService(final int consulPort, final String tag) {
@@ -79,9 +78,8 @@ public final class ConsulService {
 	}
 
 	/**
-	 * Communicates to consul over consul's REST API and retrieves list of healthy
-	 * node's IPs & port detail for the
-	 * given service name
+	 * Communicates to consul over consul's REST API and retrieves list of healthy node's
+	 * IPs & port detail for the given service name
 	 * <p/>
 	 * It does it by making HTTP API call to
 	 * <p/>
@@ -91,22 +89,22 @@ public final class ConsulService {
 	 * queryParams is ?passing by default if tag holds not null value it would be
 	 * ?passing&tag=${tag}
 	 *
-	 * @param serviceName
-	 * @return non null Set<DiscoveryResult> Containing IPs & port detail of healthy
-	 * nodes for given serviceName
+	 * @param serviceNames
+	 * @return non null Set<DiscoveryResult> Containing IPs & port detail of healthy nodes
+	 * for given serviceName
 	 */
-	public Set<DiscoveryResult> discoverHealthyNodes(String serviceName) throws
+	public Set<DiscoveryResult> discoverHealthyNodes(Set<String> serviceNames) throws
 			IOException {
 		Set<DiscoveryResult> result = new HashSet<>();
-		String consulServiceHealthEndPoint = getConsulHealthCheckApiUrl(serviceName);
-		final String apiResponse = Utility.readUrl(consulServiceHealthEndPoint);
-		HealthCheck[] healthChecks = new Gson().fromJson(apiResponse,
-				HealthCheck[]
-						.class);
-		Arrays.stream(healthChecks).forEach(healthCheck -> {
-			result.add(new DiscoveryResult(healthCheck.getNode().getAddress(), healthCheck
-					.getService().getPort()));
-		});
+		for (String serviceName : serviceNames) {
+			String consulServiceHealthEndPoint = getConsulHealthCheckApiUrl(serviceName);
+			final String apiResponse = Utility.readUrl(consulServiceHealthEndPoint);
+			HealthCheck[] healthChecks = new Gson().fromJson(apiResponse, HealthCheck[].class);
+			Arrays.stream(healthChecks).forEach(healthCheck -> {
+				result.add(new DiscoveryResult(healthCheck.getNode().getAddress(),
+						healthCheck.getService().getPort()));
+			});
+		}
 		return result;
 	}
 
