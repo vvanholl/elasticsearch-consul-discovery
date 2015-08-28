@@ -96,15 +96,13 @@ public final class ConsulService {
 	public Set<DiscoveryResult> discoverHealthyNodes(Set<String> serviceNames) throws
 			IOException {
 		Set<DiscoveryResult> result = new HashSet<>();
-		for (String serviceName: serviceNames) {
+		for (String serviceName : serviceNames) {
 			String consulServiceHealthEndPoint = getConsulHealthCheckApiUrl(serviceName);
 			final String apiResponse = Utility.readUrl(consulServiceHealthEndPoint);
-			HealthCheck[] healthChecks = new Gson().fromJson(apiResponse,
-					HealthCheck[]
-							.class);
+			HealthCheck[] healthChecks = new Gson().fromJson(apiResponse, HealthCheck[].class);
 			Arrays.stream(healthChecks).forEach(healthCheck -> {
-				result.add(new DiscoveryResult(healthCheck.getNode().getAddress(), healthCheck
-						.getService().getPort()));
+				result.add(new DiscoveryResult(healthCheck.getNode().getAddress(),
+						healthCheck.getService().getPort()));
 			});
 		}
 		return result;
