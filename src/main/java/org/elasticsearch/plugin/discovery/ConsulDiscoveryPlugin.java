@@ -1,6 +1,4 @@
-
-
-package org.elasticsearch.plugin.discovery;
+package org.elasticsearch.plugin.discovery.consul;
 /**
  * Copyright © 2015 Lithium Technologies, Inc. All rights reserved subject to the terms of
  * the MIT License located at
@@ -47,21 +45,32 @@ package org.elasticsearch.plugin.discovery;
  * Created by Jigar Joshi on 8/9/15.
  */
 
+import org.elasticsearch.common.inject.Module;
+import org.elasticsearch.common.logging.ESLogger;
+import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.plugins.AbstractPlugin;
+import org.elasticsearch.discovery.DiscoveryModule;
+import org.elasticsearch.discovery.consul.ConsulDiscovery;
+import org.elasticsearch.discovery.consul.ConsulDiscoveryModule;
+import org.elasticsearch.discovery.consul.ConsulUnicastHostsProvider;
+import org.elasticsearch.plugins.Plugin;
 
+import java.util.Collection;
+import java.util.Collections;
 
-public class ConsulDiscoveryPlugin extends AbstractPlugin {
+public class ConsulDiscoveryPlugin extends Plugin {
 
 	private final Settings settings;
+	protected final ESLogger logger = Loggers.getLogger(ConsulDiscoveryPlugin.class);
 
 	public ConsulDiscoveryPlugin(Settings settings) {
 		this.settings = settings;
+		logger.trace("starting consul discovery plugin...");
 	}
 
 	@Override
 	public String name() {
-		return "consul-discovery";
+		return "discovery-consul";
 	}
 
 	@Override
@@ -69,5 +78,13 @@ public class ConsulDiscoveryPlugin extends AbstractPlugin {
 		return "Consul Discovery Plugin";
 	}
 
+	@Override
+	public Collection<Module> nodeModules() {
+		return Collections.singletonList((Module) new ConsulDiscoveryModule(settings));
+	}
 
+	public void onModule(DiscoveryModule discoveryModule) {
+		discoveryModule.addDiscoveryType("consul", ConsulDiscovery.class);
+		discoveryModule.addUnicastHostProvider(ConsulUnicastHostsProvider.class);
+	}
 }

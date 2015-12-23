@@ -30,7 +30,7 @@
     </scm>
 
     <properties>
-        <elasticsearch.version>1.6.2</elasticsearch.version>
+        <elasticsearch.version>2.1.1</elasticsearch.version>
     </properties>
 
     <dependencies>

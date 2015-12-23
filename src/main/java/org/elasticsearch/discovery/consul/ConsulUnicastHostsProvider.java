@@ -51,7 +51,6 @@ import consul.model.DiscoveryResult;
 import consul.service.ConsulService;
 import org.elasticsearch.Version;
 import org.elasticsearch.cluster.node.DiscoveryNode;
-import org.elasticsearch.common.collect.Lists;
 import org.elasticsearch.common.component.AbstractComponent;
 import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.settings.Settings;
@@ -60,6 +59,7 @@ import org.elasticsearch.discovery.zen.ping.unicast.UnicastHostsProvider;
 import org.elasticsearch.transport.TransportService;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -95,7 +95,7 @@ public class ConsulUnicastHostsProvider extends AbstractComponent implements Uni
 		if (logger.isTraceEnabled()) {
 			logger.trace("discovering nodes");
 		}
-		List<DiscoveryNode> discoNodes = Lists.newArrayList();
+		List<DiscoveryNode> discoNodes = new ArrayList();
 		Set<DiscoveryResult> consulDiscoveryResults = null;
 		try {
 			consulDiscoveryResults = new ConsulService(this
@@ -113,8 +113,10 @@ public class ConsulUnicastHostsProvider extends AbstractComponent implements Uni
 			consulDiscoveryResults.stream().forEach(discoveryResult -> {
 				String address = discoveryResult.getIp() + ":" + discoveryResult.getPort();
 				try {
-					TransportAddress[] addresses = transportService.addressesFromString(address);
-					logger.trace("adding {}, transport_address {}", address, addresses[0]);
+					TransportAddress[] addresses = transportService.addressesFromString(address, 1);
+					if (logger.isTraceEnabled()) {
+						logger.trace("adding {}, transport_address {}", address, addresses[0]);
+					}
 					discoNodes.add(new DiscoveryNode("#consul-" + address, addresses[0],
 							version.minimumCompatibilityVersion()));
 				} catch (Exception e) {
