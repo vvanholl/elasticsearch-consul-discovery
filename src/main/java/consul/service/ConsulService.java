@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Optional;
 
 /**
  * Uses consul's REST API and exposes certain functionality
@@ -100,10 +101,15 @@ public final class ConsulService {
 			String consulServiceHealthEndPoint = getConsulHealthCheckApiUrl(serviceName);
 			final String apiResponse = Utility.readUrl(consulServiceHealthEndPoint);
 			HealthCheck[] healthChecks = new Gson().fromJson(apiResponse, HealthCheck[].class);
+
 			Arrays.stream(healthChecks).forEach(healthCheck -> {
-				result.add(new DiscoveryResult(healthCheck.getNode().getAddress(),
-						healthCheck.getService().getPort()));
-			});
+                                String ip = healthCheck.getService().getAddress();
+                                int port = healthCheck.getService().getPort();
+                                if (ip == null || ip.isEmpty()) {
+                                    ip = healthCheck.getNode().getAddress();
+                                }
+                                result.add(new DiscoveryResult(ip, port));
+                            });
 		}
 		return result;
 	}
