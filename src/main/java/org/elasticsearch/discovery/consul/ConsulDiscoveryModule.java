@@ -11,21 +11,25 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 package org.elasticsearch.discovery.consul;
 
+import org.elasticsearch.common.inject.AbstractModule;
 import org.elasticsearch.common.inject.Inject;
+import org.elasticsearch.common.logging.ESLogger;
+import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.discovery.Discovery;
-import org.elasticsearch.discovery.zen.ZenDiscoveryModule;
+import org.elasticsearch.ElasticsearchException;
 
-
-public class ConsulDiscoveryModule extends ZenDiscoveryModule {
+public class ConsulDiscoveryModule extends AbstractModule {
+	protected final ESLogger logger;
+	private Settings settings;
 
 	@Inject
 	public ConsulDiscoveryModule(Settings settings) {
-		addUnicastHostProvider(ConsulUnicastHostsProvider.class);
+		this.settings = settings;
+		this.logger = Loggers.getLogger(getClass(), settings);
 	}
 
 	@Override
-	protected void bindDiscovery() {
-		bind(Discovery.class).to(ConsulDiscovery.class).asEagerSingleton();
+	protected void configure() {
+		logger.debug("starting consul services");
 	}
 }

@@ -15,8 +15,6 @@ package org.elasticsearch.discovery.consul;
 
 import org.elasticsearch.cluster.ClusterName;
 import org.elasticsearch.cluster.ClusterService;
-import org.elasticsearch.cluster.node.DiscoveryNodeService;
-import org.elasticsearch.cluster.settings.DynamicSettings;
 import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.discovery.DiscoverySettings;
@@ -29,13 +27,15 @@ import org.elasticsearch.transport.TransportService;
 
 public class ConsulDiscovery extends ZenDiscovery {
 
+	public static final String CONSUL = "consul";
+
 	@Inject
 
-	public ConsulDiscovery(Settings settings, ClusterName clusterName, ThreadPool threadPool, TransportService transportService,
-	                       ClusterService clusterService, NodeSettingsService nodeSettingsService, ZenPingService pingService,
-	                       DiscoveryNodeService discoveryNodeService, DiscoverySettings discoverySettings,
-	                       ElectMasterService electMasterService, DynamicSettings dynamicSettings) {
+	public ConsulDiscovery(Settings settings, ClusterName clusterName, ThreadPool threadPool,
+	                       TransportService transportService, final ClusterService clusterService,
+	                       NodeSettingsService nodeSettingsService, ZenPingService pingService,
+	                       ElectMasterService electMasterService, DiscoverySettings discoverySettings) {
 		super(settings, clusterName, threadPool, transportService, clusterService, nodeSettingsService,
-				discoveryNodeService, pingService, electMasterService, discoverySettings, dynamicSettings);
+		      pingService, electMasterService, discoverySettings);
 	}
 }
