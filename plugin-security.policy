@@ -1,0 +1,4 @@
+grant {
+    // Needed for GSON serialization
+    permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
+};
