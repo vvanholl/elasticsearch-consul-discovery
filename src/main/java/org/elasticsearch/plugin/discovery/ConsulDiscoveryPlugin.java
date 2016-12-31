@@ -1,4 +1,4 @@
-package org.elasticsearch.plugin.discovery.consul;
+package org.elasticsearch.plugin.discovery;
 /**
  * Copyright © 2015 Lithium Technologies, Inc. All rights reserved subject to the terms of
  * the MIT License located at
@@ -45,46 +45,77 @@ package org.elasticsearch.plugin.discovery.consul;
  * Created by Jigar Joshi on 8/9/15.
  */
 
-import org.elasticsearch.common.inject.Module;
-import org.elasticsearch.common.logging.ESLogger;
+import org.apache.logging.log4j.Logger;
+import org.elasticsearch.cluster.service.ClusterService;
+import org.elasticsearch.common.logging.DeprecationLogger;
 import org.elasticsearch.common.logging.Loggers;
+import org.elasticsearch.common.network.NetworkService;
+import org.elasticsearch.common.settings.Setting;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.discovery.Discovery;
 import org.elasticsearch.discovery.DiscoveryModule;
-import org.elasticsearch.discovery.consul.ConsulDiscovery;
-import org.elasticsearch.discovery.consul.ConsulDiscoveryModule;
 import org.elasticsearch.discovery.consul.ConsulUnicastHostsProvider;
+import org.elasticsearch.discovery.zen.UnicastHostsProvider;
+import org.elasticsearch.discovery.zen.ZenDiscovery;
+import org.elasticsearch.plugins.DiscoveryPlugin;
 import org.elasticsearch.plugins.Plugin;
+import org.elasticsearch.threadpool.ThreadPool;
+import org.elasticsearch.transport.TransportService;
 
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
-public class ConsulDiscoveryPlugin extends Plugin {
+public class ConsulDiscoveryPlugin extends Plugin implements DiscoveryPlugin {
+    public static final String CONSUL = "consul";
 
-	private final Settings settings;
-	protected final ESLogger logger = Loggers.getLogger(ConsulDiscoveryPlugin.class);
+    private static final Logger logger = Loggers.getLogger(ConsulDiscoveryPlugin.class);
+    private static final DeprecationLogger deprecationLogger = new DeprecationLogger(logger);
 
-	public ConsulDiscoveryPlugin(Settings settings) {
-		this.settings = settings;
-		logger.trace("starting consul discovery plugin...");
-	}
+    private final Settings settings;
 
-	@Override
-	public String name() {
-		return "discovery-consul";
-	}
+    public ConsulDiscoveryPlugin(Settings settings) {
+        this.settings = settings;
+        logger.info("Starting Consul discovery plugin");
+    }
 
-	@Override
-	public String description() {
-		return "Consul Discovery Plugin";
-	}
+    @Override
+    public Map<String, Supplier<Discovery>> getDiscoveryTypes(ThreadPool threadPool, TransportService transportService, ClusterService clusterService, UnicastHostsProvider hostsProvider) {
+        return Collections.singletonMap(CONSUL, () -> new ZenDiscovery(settings, threadPool, transportService, clusterService, hostsProvider));
+    }
 
-	@Override
-	public Collection<Module> nodeModules() {
-		return Collections.singletonList((Module) new ConsulDiscoveryModule(settings));
-	}
+    @Override
+    public Map<String, Supplier<UnicastHostsProvider>> getZenHostsProviders(TransportService transportService, NetworkService networkService) {
+        return Collections.singletonMap(
+                CONSUL,
+                () -> {
+                    return new ConsulUnicastHostsProvider(settings, transportService);
+                });
+    }
 
-	public void onModule(DiscoveryModule discoveryModule) {
-		discoveryModule.addDiscoveryType("consul", ConsulDiscovery.class);
-		discoveryModule.addUnicastHostProvider(ConsulUnicastHostsProvider.class);
-	}
+    @Override
+    public List<Setting<?>> getSettings() {
+        return Arrays.asList(
+                ConsulUnicastHostsProvider.CONSUL_LOCALWSPORT,
+                ConsulUnicastHostsProvider.CONSUL_SERVICENAMES,
+                ConsulUnicastHostsProvider.CONSUL_TAG
+        );
+    }
+
+    @Override
+    public Settings additionalSettings() {
+        String discoveryType = DiscoveryModule.DISCOVERY_TYPE_SETTING.get(settings);
+        if (discoveryType.equals(CONSUL)) {
+            deprecationLogger.deprecated("Using " + DiscoveryModule.DISCOVERY_TYPE_SETTING.getKey() +
+                    " setting to set hosts provider is deprecated. " +
+                    "Set \"" + DiscoveryModule.DISCOVERY_HOSTS_PROVIDER_SETTING.getKey() + ": " + CONSUL + "\" instead");
+            if (DiscoveryModule.DISCOVERY_HOSTS_PROVIDER_SETTING.exists(settings) == false) {
+                return Settings.builder().put(DiscoveryModule.DISCOVERY_HOSTS_PROVIDER_SETTING.getKey(), CONSUL).build();
+            }
+        }
+        return Settings.EMPTY;
+    }
+
 }

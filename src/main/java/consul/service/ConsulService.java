@@ -125,7 +125,7 @@ public final class ConsulService {
 
 	private final String getConsulHealthCheckApiUrl(final String serviceName) {
 		final StringBuffer queryParam = new StringBuffer("passing");
-		if (this.tag != null) {
+		if ((this.tag != null) && (!this.tag.equals(""))){
 			queryParam.append("&tag=");
 			queryParam.append(tag.trim());
 		}

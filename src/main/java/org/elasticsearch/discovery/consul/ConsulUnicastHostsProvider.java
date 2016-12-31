@@ -1,3 +1,4 @@
+package org.elasticsearch.discovery.consul;
 /**
  * Copyright © 2015 Lithium Technologies, Inc. All rights reserved subject to the terms of
  * the MIT License located at
@@ -44,18 +45,16 @@
  * Created by Jigar Joshi on 8/9/15.
  */
 
-package org.elasticsearch.discovery.consul;
-
-
 import consul.model.DiscoveryResult;
 import consul.service.ConsulService;
 import org.elasticsearch.Version;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.common.component.AbstractComponent;
-import org.elasticsearch.common.inject.Inject;
+import org.elasticsearch.common.settings.Setting;
+import org.elasticsearch.common.settings.Setting.Property;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
-import org.elasticsearch.discovery.zen.ping.unicast.UnicastHostsProvider;
+import org.elasticsearch.discovery.zen.UnicastHostsProvider;
 import org.elasticsearch.transport.TransportService;
 
 import java.io.IOException;
@@ -63,74 +62,66 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
+import static java.util.Collections.emptyList;
 
 public class ConsulUnicastHostsProvider extends AbstractComponent implements UnicastHostsProvider {
 
-	private final TransportService transportService;
-	private final Version version;
-	private final Set<String> consulServiceNames;
-	private final int consulAgentLocalWebServicePort;
-	private final String tag;
+    public static final Setting<Integer> CONSUL_LOCALWSPORT = Setting.intSetting("discovery.consul.local-ws-port", 8500, Property.NodeScope);
+    public static final Setting<List<String>> CONSUL_SERVICENAMES = Setting.listSetting("discovery.consul.service-names", emptyList(), Function.identity(), Property.NodeScope);
+    public static final Setting<String> CONSUL_TAG = Setting.simpleString("discovery.consul.tag", Property.NodeScope);
 
-	@Inject
-	public ConsulUnicastHostsProvider(Settings settings, TransportService
-			transportService, Version version) {
-		super(settings);
-		this.transportService = transportService;
-		this.version = version;
-		this.consulServiceNames = new HashSet<>();
+    private final TransportService transportService;
+    private final Set<String> consulServiceNames;
+    private final int consulAgentLocalWebServicePort;
+    private final String tag;
 
-		final String[] serviceNamesArray = settings.getAsArray("discovery.consul.service-names");
-		for (String serviceName : serviceNamesArray) {
-			this.consulServiceNames.add(serviceName);
-		}
-		this.consulAgentLocalWebServicePort = settings.getAsInt("discovery.consul" +
-				".local-ws-port", 8500);
-		this.tag = settings.get("discovery.consul.tag");
-	}
+    public ConsulUnicastHostsProvider(Settings settings, TransportService transportService) {
+        super(settings);
+        this.transportService = transportService;
 
-	@Override
-	public List<DiscoveryNode> buildDynamicNodes() {
-		if (logger.isTraceEnabled()) {
-			logger.trace("discovering nodes");
-		}
-		List<DiscoveryNode> discoNodes = new ArrayList();
-		Set<DiscoveryResult> consulDiscoveryResults = null;
-		try {
-			logger.trace("starting discovery request");
-			final long startTime = System.currentTimeMillis();
-			consulDiscoveryResults = new ConsulService(this
-					.consulAgentLocalWebServicePort, this.tag)
-					.discoverHealthyNodes(this.consulServiceNames);
-			if (logger.isTraceEnabled()) {
-				logger.trace("discovered {} nodes", (consulDiscoveryResults != null ?
-						consulDiscoveryResults.size() : 0));
-			}
-			logger.debug("{} ms it took for discovery request", (System
-					.currentTimeMillis() - startTime));
-		} catch (IOException ioException) {
-			logger.error("Failed to discover nodes, failed in making consul based " +
-					"discovery", ioException);
-		}
-		if (consulDiscoveryResults != null) {
-			consulDiscoveryResults.stream().forEach(discoveryResult -> {
-				String address = discoveryResult.getIp() + ":" + discoveryResult.getPort();
-				try {
-					TransportAddress[] addresses = transportService.addressesFromString(address, 1);
-					if (logger.isTraceEnabled()) {
-						logger.trace("adding {}, transport_address {}", address, addresses[0]);
-					}
-					discoNodes.add(new DiscoveryNode("#consul-" + address, addresses[0],
-							version.minimumCompatibilityVersion()));
-				} catch (Exception e) {
-					logger.warn("failed to add {}, address {}", e, address);
-				}
-			});
-		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("using consul based dynamic discovery nodes {}", discoNodes);
-		}
-		return discoNodes;
-	}
+        this.consulServiceNames = new HashSet<>();
+        for (String serviceName : CONSUL_SERVICENAMES.get(settings)) {
+            this.consulServiceNames.add(serviceName);
+        }
+
+        this.consulAgentLocalWebServicePort = CONSUL_LOCALWSPORT.get(settings);
+        this.tag = CONSUL_TAG.get(settings);
+    }
+
+    @Override
+    public List<DiscoveryNode> buildDynamicNodes() {
+        logger.debug("Discovering nodes");
+
+        List<DiscoveryNode> discoNodes = new ArrayList();
+        Set<DiscoveryResult> consulDiscoveryResults = null;
+
+        try {
+            logger.debug("Starting discovery request");
+            final long startTime = System.currentTimeMillis();
+            consulDiscoveryResults = new ConsulService(this.consulAgentLocalWebServicePort, this.tag).discoverHealthyNodes(this.consulServiceNames);
+            logger.debug("Discovered {} nodes", (consulDiscoveryResults != null ? consulDiscoveryResults.size() : 0));
+            logger.debug("{} ms it took for discovery request", (System.currentTimeMillis() - startTime));
+        } catch (IOException ioException) {
+            logger.error("Failed to discover nodes, failed in making consul based " + "discovery", ioException);
+        }
+
+        if (consulDiscoveryResults != null) {
+            consulDiscoveryResults.stream().forEach(discoveryResult -> {
+                String address = discoveryResult.getIp() + ":" + discoveryResult.getPort();
+                try {
+                    TransportAddress[] addresses = transportService.addressesFromString(address, 1);
+                    logger.debug("Adding {}, transport_address {}", address, addresses[0]);
+                    discoNodes.add(new DiscoveryNode("#consul-" + address, addresses[0], Version.CURRENT.minimumCompatibilityVersion()));
+                } catch (Exception e) {
+                    logger.warn("Failed to add {}, address {}", e, address);
+                }
+            });
+        }
+
+        logger.debug("Using Consul based dynamic discovery nodes {}", discoNodes);
+
+        return discoNodes;
+    }
 }
