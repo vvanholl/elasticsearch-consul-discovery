@@ -47,6 +47,7 @@ package org.elasticsearch.plugin.discovery;
 
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.cluster.service.ClusterService;
+import org.elasticsearch.common.io.stream.NamedWriteableRegistry;
 import org.elasticsearch.common.logging.DeprecationLogger;
 import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.network.NetworkService;
@@ -82,8 +83,8 @@ public class ConsulDiscoveryPlugin extends Plugin implements DiscoveryPlugin {
     }
 
     @Override
-    public Map<String, Supplier<Discovery>> getDiscoveryTypes(ThreadPool threadPool, TransportService transportService, ClusterService clusterService, UnicastHostsProvider hostsProvider) {
-        return Collections.singletonMap(CONSUL, () -> new ZenDiscovery(settings, threadPool, transportService, clusterService, hostsProvider));
+    public Map<String, Supplier<Discovery>> getDiscoveryTypes(ThreadPool threadPool, TransportService transportService, NamedWriteableRegistry namedWriteableRegistry, ClusterService clusterService, UnicastHostsProvider hostsProvider) {
+        return Collections.singletonMap(CONSUL, () -> new ZenDiscovery(settings, threadPool, transportService, namedWriteableRegistry, clusterService, hostsProvider));
     }
 
     @Override
