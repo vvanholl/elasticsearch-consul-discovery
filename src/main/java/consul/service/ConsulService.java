@@ -55,7 +55,6 @@ import java.security.PrivilegedAction;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Optional;
 
 /**
  * Uses consul's REST API and exposes certain functionality
@@ -65,18 +64,17 @@ import java.util.Optional;
 
 public final class ConsulService {
 	private static final String CONSUL_HEALTH_CHECK_API_ENDPOINT_TEMPLATE =
-			"http://localhost:%d/v1/health/service/%s?%s";
+			"http://%s/v1/health/service/%s?%s";
 
-	private final int consulAgentLocalWebServicePort;
+	private final String consulHttpAddr;
 	private final String tag;
 
 	/**
-	 * @param consulPort port where the consul agent on node exposes HTTP API, by default
-	 *                   it is 8500
+	 * @param consulHttpAddr consul agent Http address.
 	 * @param tag        if not null it will filter query on the tags
 	 */
-	public ConsulService(final int consulPort, final String tag) {
-		this.consulAgentLocalWebServicePort = consulPort;
+	public ConsulService(final String consulHttpAddr, final String tag) {
+		this.consulHttpAddr = consulHttpAddr;
 		this.tag = tag;
 	}
 
@@ -86,7 +84,7 @@ public final class ConsulService {
 	 * <p/>
 	 * It does it by making HTTP API call to
 	 * <p/>
-	 * http://localhost:${consulAgentLocalWebServicePort}/v1/health/service/${serviceName
+	 * http://${consulHttpAddr}/v1/health/service/${serviceName
 	 * }?${queryParams}
 	 * <p/>
 	 * queryParams is ?passing by default if tag holds not null value it would be
@@ -130,7 +128,7 @@ public final class ConsulService {
 			queryParam.append(tag.trim());
 		}
 		return String.format(CONSUL_HEALTH_CHECK_API_ENDPOINT_TEMPLATE,
-				consulAgentLocalWebServicePort, serviceName,
+				consulHttpAddr, serviceName,
 				queryParam.toString());
 	}
 }
