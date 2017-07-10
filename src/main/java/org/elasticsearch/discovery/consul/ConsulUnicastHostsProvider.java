@@ -68,13 +68,13 @@ import static java.util.Collections.emptyList;
 
 public class ConsulUnicastHostsProvider extends AbstractComponent implements UnicastHostsProvider {
 
-    public static final Setting<Integer> CONSUL_LOCALWSPORT = Setting.intSetting("discovery.consul.local-ws-port", 8500, Property.NodeScope);
+    public static final Setting<String> CONSUL_HTTP_ADDR = Setting.simpleString("discovery.consul.http-addr", Property.NodeScope);
     public static final Setting<List<String>> CONSUL_SERVICENAMES = Setting.listSetting("discovery.consul.service-names", emptyList(), Function.identity(), Property.NodeScope);
     public static final Setting<String> CONSUL_TAG = Setting.simpleString("discovery.consul.tag", Property.NodeScope);
 
     private final TransportService transportService;
     private final Set<String> consulServiceNames;
-    private final int consulAgentLocalWebServicePort;
+    private final String consulHttpAddr;
     private final String tag;
 
     public ConsulUnicastHostsProvider(Settings settings, TransportService transportService) {
@@ -86,7 +86,7 @@ public class ConsulUnicastHostsProvider extends AbstractComponent implements Uni
             this.consulServiceNames.add(serviceName);
         }
 
-        this.consulAgentLocalWebServicePort = CONSUL_LOCALWSPORT.get(settings);
+        this.consulHttpAddr = CONSUL_HTTP_ADDR.get(settings);
         this.tag = CONSUL_TAG.get(settings);
     }
 
@@ -100,7 +100,7 @@ public class ConsulUnicastHostsProvider extends AbstractComponent implements Uni
         try {
             logger.debug("Starting discovery request");
             final long startTime = System.currentTimeMillis();
-            consulDiscoveryResults = new ConsulService(this.consulAgentLocalWebServicePort, this.tag).discoverHealthyNodes(this.consulServiceNames);
+            consulDiscoveryResults = new ConsulService(this.consulHttpAddr, this.tag).discoverHealthyNodes(this.consulServiceNames);
             logger.debug("Discovered {} nodes", (consulDiscoveryResults != null ? consulDiscoveryResults.size() : 0));
             logger.debug("{} ms it took for discovery request", (System.currentTimeMillis() - startTime));
         } catch (IOException ioException) {
