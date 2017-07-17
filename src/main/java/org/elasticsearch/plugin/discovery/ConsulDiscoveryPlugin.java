@@ -101,7 +101,8 @@ public class ConsulDiscoveryPlugin extends Plugin implements DiscoveryPlugin {
         return Arrays.asList(
                 ConsulUnicastHostsProvider.CONSUL_LOCALWSPORT,
                 ConsulUnicastHostsProvider.CONSUL_SERVICENAMES,
-                ConsulUnicastHostsProvider.CONSUL_TAG
+                ConsulUnicastHostsProvider.CONSUL_TAG,
+                ConsulUnicastHostsProvider.CONSUL_HEALTHY
         );
     }
 
