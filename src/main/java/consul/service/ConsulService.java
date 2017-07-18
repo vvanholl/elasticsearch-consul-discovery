@@ -69,34 +69,38 @@ public final class ConsulService {
 
 	private final int consulAgentLocalWebServicePort;
 	private final String tag;
+	private final boolean healthy;
 
 	/**
 	 * @param consulPort port where the consul agent on node exposes HTTP API, by default
 	 *                   it is 8500
 	 * @param tag        if not null it will filter query on the tags
+	 * @param healthy    [true|false] (default: true) determines if service should be healthy
+	 *                   to be discovered
 	 */
-	public ConsulService(final int consulPort, final String tag) {
+	public ConsulService(final int consulPort, final String tag, final boolean healthy) {
 		this.consulAgentLocalWebServicePort = consulPort;
 		this.tag = tag;
+		this.healthy = healthy;
 	}
 
 	/**
-	 * Communicates to consul over consul's REST API and retrieves list of healthy node's
-	 * IPs & port detail for the given service name
+	 * Communicates to consul over consul's REST API and retrieves list of node's
+	 * IPs & port detail for the given service name and health status
 	 * <p/>
 	 * It does it by making HTTP API call to
 	 * <p/>
 	 * http://localhost:${consulAgentLocalWebServicePort}/v1/health/service/${serviceName
 	 * }?${queryParams}
 	 * <p/>
-	 * queryParams is ?passing by default if tag holds not null value it would be
-	 * ?passing&tag=${tag}
+	 * queryParams is ?passing=true (false if discovery.consul.healthy: false) by default
+	 * If tag holds not null value it would be ?passing=${healthy}&tag=${tag}
 	 *
 	 * @param serviceNames
-	 * @return non null Set<DiscoveryResult> Containing IPs & port detail of healthy nodes
-	 * for given serviceName
+	 * @return non null Set<DiscoveryResult> Containing IPs & port detail of nodes for
+	 * given serviceName
 	 */
-	public Set<DiscoveryResult> discoverHealthyNodes(Set<String> serviceNames) throws
+	public Set<DiscoveryResult> discoverNodes(Set<String> serviceNames) throws
 			IOException {
 		Set<DiscoveryResult> result = new HashSet<>();
 		for (String serviceName : serviceNames) {
@@ -124,7 +128,7 @@ public final class ConsulService {
 
 
 	private final String getConsulHealthCheckApiUrl(final String serviceName) {
-		final StringBuffer queryParam = new StringBuffer("passing");
+		final StringBuffer queryParam = new StringBuffer(String.format("passing=%b", this.healthy));
 		if ((this.tag != null) && (!this.tag.equals(""))){
 			queryParam.append("&tag=");
 			queryParam.append(tag.trim());
