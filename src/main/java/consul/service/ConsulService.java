@@ -65,7 +65,7 @@ import java.util.Optional;
 
 public final class ConsulService {
 	private static final String CONSUL_HEALTH_CHECK_API_ENDPOINT_TEMPLATE =
-			"http://%s:%d/v1/health/service/%s?%s";
+			"%s:%d/v1/health/service/%s?%s";
 
 	private final String consulAgentLocalHostname;
 	private final int consulAgentLocalWebServicePort;

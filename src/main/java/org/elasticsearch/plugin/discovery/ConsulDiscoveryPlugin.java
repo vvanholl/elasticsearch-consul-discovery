@@ -100,6 +100,7 @@ public class ConsulDiscoveryPlugin extends Plugin implements DiscoveryPlugin {
     public List<Setting<?>> getSettings() {
         return Arrays.asList(
                 ConsulUnicastHostsProvider.CONSUL_LOCALWSPORT,
+                ConsulUnicastHostsProvider.CONSUL_LOCALWSHOST,
                 ConsulUnicastHostsProvider.CONSUL_SERVICENAMES,
                 ConsulUnicastHostsProvider.CONSUL_TAG,
                 ConsulUnicastHostsProvider.CONSUL_HEALTHY
