@@ -65,8 +65,9 @@ import java.util.Optional;
 
 public final class ConsulService {
 	private static final String CONSUL_HEALTH_CHECK_API_ENDPOINT_TEMPLATE =
-			"http://localhost:%d/v1/health/service/%s?%s";
+			"%s:%d/v1/health/service/%s?%s";
 
+	private final String consulAgentLocalHostname;
 	private final int consulAgentLocalWebServicePort;
 	private final String tag;
 	private final boolean healthy;
@@ -78,8 +79,9 @@ public final class ConsulService {
 	 * @param healthy    [true|false] (default: true) determines if service should be healthy
 	 *                   to be discovered
 	 */
-	public ConsulService(final int consulPort, final String tag, final boolean healthy) {
+	public ConsulService(final String consulHost, final int consulPort, final String tag, final boolean healthy) {
 		this.consulAgentLocalWebServicePort = consulPort;
+		this.consulAgentLocalHostname = ( consulHost.isEmpty() ) ? "localhost" : consulHost;
 		this.tag = tag;
 		this.healthy = healthy;
 	}
@@ -90,7 +92,7 @@ public final class ConsulService {
 	 * <p/>
 	 * It does it by making HTTP API call to
 	 * <p/>
-	 * http://localhost:${consulAgentLocalWebServicePort}/v1/health/service/${serviceName
+	 * http://${consulAgentLocalHostname}:${consulAgentLocalWebServicePort}/v1/health/service/${serviceName
 	 * }?${queryParams}
 	 * <p/>
 	 * queryParams is ?passing=true (false if discovery.consul.healthy: false) by default
@@ -134,7 +136,7 @@ public final class ConsulService {
 			queryParam.append(tag.trim());
 		}
 		return String.format(CONSUL_HEALTH_CHECK_API_ENDPOINT_TEMPLATE,
-				consulAgentLocalWebServicePort, serviceName,
+				consulAgentLocalHostname, consulAgentLocalWebServicePort, serviceName,
 				queryParam.toString());
 	}
 }

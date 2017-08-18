@@ -58,16 +58,14 @@ import org.elasticsearch.discovery.zen.UnicastHostsProvider;
 import org.elasticsearch.transport.TransportService;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 import static java.util.Collections.emptyList;
 
 public class ConsulUnicastHostsProvider extends AbstractComponent implements UnicastHostsProvider {
 
+    public static final Setting<String> CONSUL_LOCALWSHOST = Setting.simpleString("discovery.consul.local-ws-host", Property.NodeScope);
     public static final Setting<Integer> CONSUL_LOCALWSPORT = Setting.intSetting("discovery.consul.local-ws-port", 8500, Property.NodeScope);
     public static final Setting<List<String>> CONSUL_SERVICENAMES = Setting.listSetting("discovery.consul.service-names", emptyList(), Function.identity(), Property.NodeScope);
     public static final Setting<String> CONSUL_TAG = Setting.simpleString("discovery.consul.tag", Property.NodeScope);
@@ -75,6 +73,7 @@ public class ConsulUnicastHostsProvider extends AbstractComponent implements Uni
 
     private final TransportService transportService;
     private final Set<String> consulServiceNames;
+    private final String consulAgentLocalWebServiceHost;
     private final int consulAgentLocalWebServicePort;
     private final String tag;
     private final boolean healthy;
@@ -88,6 +87,7 @@ public class ConsulUnicastHostsProvider extends AbstractComponent implements Uni
             this.consulServiceNames.add(serviceName);
         }
 
+        this.consulAgentLocalWebServiceHost = CONSUL_LOCALWSHOST.get(settings);
         this.consulAgentLocalWebServicePort = CONSUL_LOCALWSPORT.get(settings);
         this.tag = CONSUL_TAG.get(settings);
         this.healthy = CONSUL_HEALTHY.get(settings);
@@ -103,7 +103,7 @@ public class ConsulUnicastHostsProvider extends AbstractComponent implements Uni
         try {
             logger.debug("Starting discovery request");
             final long startTime = System.currentTimeMillis();
-            consulDiscoveryResults = new ConsulService(this.consulAgentLocalWebServicePort, this.tag, this.healthy).discoverNodes(this.consulServiceNames);
+            consulDiscoveryResults = new ConsulService( this.consulAgentLocalWebServiceHost, this.consulAgentLocalWebServicePort, this.tag, this.healthy).discoverNodes(this.consulServiceNames);
             logger.debug("Discovered {} nodes", (consulDiscoveryResults != null ? consulDiscoveryResults.size() : 0));
             logger.debug("{} ms it took for discovery request", (System.currentTimeMillis() - startTime));
         } catch (IOException ioException) {
