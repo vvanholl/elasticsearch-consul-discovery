@@ -73,6 +73,8 @@ public final class ConsulService {
 	private final boolean healthy;
 
 	/**
+	 * @param consulHost host where the consul agent on node exposes HTTP API, by default
+	 *                   it is http://localhost
 	 * @param consulPort port where the consul agent on node exposes HTTP API, by default
 	 *                   it is 8500
 	 * @param tag        if not null it will filter query on the tags
@@ -81,7 +83,7 @@ public final class ConsulService {
 	 */
 	public ConsulService(final String consulHost, final int consulPort, final String tag, final boolean healthy) {
 		this.consulAgentLocalWebServicePort = consulPort;
-		this.consulAgentLocalHostname = ( consulHost.isEmpty() ) ? "localhost" : consulHost;
+		this.consulAgentLocalHostname = ( consulHost.isEmpty() ) ? "http://localhost" : consulHost;
 		this.tag = tag;
 		this.healthy = healthy;
 	}
