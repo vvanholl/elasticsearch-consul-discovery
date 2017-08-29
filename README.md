@@ -1,23 +1,21 @@
 Consul Based Discovery Plugin for Elasticsearch
-======================================
+===============================================
 
 Uses [Consul](https://consul.io) API for Elasticsearch discovery
 
+## Build
+
+Run `gradle build` to build plugin.
+
+The plugin zip archive will be under build/distributions/
+
 ## Installation
 
-Do `vagrant up`, `vagrant ssh` and then run `mvn package` to build.
-
-The plugin ZIP will be under target/releases/
-
-Do
-
 ```
-bin/plugin --url file:///path-to-plugin-zip --install lithiumtech/elasticsearch-consul-discovery
+./bin/elasticsearch-plugin install -b https://distfiles.compuscene.net/elasticsearch/elasticsearch-consul-discovery-5.5.2.0.zip
 ```
 
-to install plugin.
-
-For easy provisioning, an RPM file is created under target/rpm if you do `mvn package rpm:rpm`. The plugin ZIP will be under /usr/local/lib when the RPM has been installed.
+**Do not forget to restart the node after installation !**
 
 ## Configuration
 

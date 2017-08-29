@@ -2,8 +2,8 @@ package consul.service;
 /**
  * Copyright © 2015 Lithium Technologies, Inc. All rights reserved subject to the terms of
  * the MIT License located at
- * <p/>
- * <p/>
+ *
+ *
  * LICENSE FILE DISCLOSURE STATEMENT AND COPYRIGHT NOTICE This LICENSE.txt file sets forth
  * the general licensing terms and attributions for the “Elasticsearch Consul Discovery
  * plugin” project software provided by Lithium Technologies, Inc. (“Lithium”).  This
@@ -39,9 +39,9 @@ package consul.service;
  * SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
  * IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  */
 
 import com.google.gson.Gson;
@@ -59,7 +59,7 @@ import java.util.Optional;
 
 /**
  * Uses consul's REST API and exposes certain functionality
- * <p/>
+ *
  * Created by Jigar Joshi on 8/9/15.
  */
 
@@ -90,19 +90,19 @@ public final class ConsulService {
 
 	/**
 	 * Communicates to consul over consul's REST API and retrieves list of node's
-	 * IPs & port detail for the given service name and health status
-	 * <p/>
+	 * IPs and port detail for the given service name and health status
+	 *
 	 * It does it by making HTTP API call to
-	 * <p/>
+	 *
 	 * http://${consulAgentLocalHostname}:${consulAgentLocalWebServicePort}/v1/health/service/${serviceName
 	 * }?${queryParams}
-	 * <p/>
-	 * queryParams is ?passing=true (false if discovery.consul.healthy: false) by default
-	 * If tag holds not null value it would be ?passing=${healthy}&tag=${tag}
 	 *
-	 * @param serviceNames
-	 * @return non null Set<DiscoveryResult> Containing IPs & port detail of nodes for
-	 * given serviceName
+	 * queryParams is ?passing=true (false if discovery.consul.healthy: false) by default
+	 * If tag holds not null value it would be {@literal ?passing=${healthy}&tag=${tag}}
+	 *
+	 * @param serviceNames Consul service names given for discovery
+	 * @return the IPs and port detail of nodes for given serviceName
+	 * @throws IOException when communication with Consul fails
 	 */
 	public Set<DiscoveryResult> discoverNodes(Set<String> serviceNames) throws
 			IOException {

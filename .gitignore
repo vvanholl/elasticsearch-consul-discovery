@@ -8,9 +8,9 @@
 *.iml
 *.iws
 
+# Gradle
+.gradle
+build
+
 # Mac
 .DS_Store
-
-# Maven
-log/
-target/

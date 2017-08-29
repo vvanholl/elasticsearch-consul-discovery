@@ -3,8 +3,8 @@ package consul.model.health;
 /**
  * Copyright © 2015 Lithium Technologies, Inc. All rights reserved subject to the terms of
  * the MIT License located at
- * <p/>
- * <p/>
+ *
+ *
  * LICENSE FILE DISCLOSURE STATEMENT AND COPYRIGHT NOTICE This LICENSE.txt file sets forth
  * the general licensing terms and attributions for the “Elasticsearch Consul Discovery
  * plugin” project software provided by Lithium Technologies, Inc. (“Lithium”).  This
@@ -40,9 +40,9 @@ package consul.model.health;
  * SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
  * IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Created by Jigar Joshi on 8/9/15.
  */
 public class Node {
