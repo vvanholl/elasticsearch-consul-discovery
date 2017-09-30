@@ -43,6 +43,10 @@ dependencies {
     releaseJars "${project.group}:${project.name}:${project.version}"
 }
 
+compileJava {
+    options.encoding = "UTF-8"
+}
+
 tasks.withType(JavaCompile) {
     options.compilerArgs << "-Xlint:unchecked,deprecation"
 }
