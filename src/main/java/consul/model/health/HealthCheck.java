@@ -46,6 +46,7 @@ package consul.model.health;
  * Created by Jigar Joshi on 8/9/15.
  */
 
+import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,8 +54,13 @@ import java.util.List;
  * Consul health check class.
  */
 public class HealthCheck {
+    @SerializedName("Checks")
     private List<Check> checks = new ArrayList<>();
+
+    @SerializedName("Node")
     private consul.model.health.Node node;
+
+    @SerializedName("Service")
     private consul.model.health.Service service;
 
     public List<Check> getChecks() {

@@ -99,9 +99,10 @@ public final class ConsulService {
      * @param serviceNames Consul service names given for discovery
      * @return the IPs and port detail of nodes for given serviceName
      * @throws IOException when communication with Consul fails
+     * @throws java.security.PrivilegedActionException when security issues
      */
     public Set<DiscoveryResult> discoverNodes(Set<String> serviceNames) throws
-            IOException {
+            IOException, java.security.PrivilegedActionException {
         Set<DiscoveryResult> result = new HashSet<>();
         for (String serviceName : serviceNames) {
             String consulServiceHealthEndPoint = getConsulHealthCheckApiUrl(serviceName);

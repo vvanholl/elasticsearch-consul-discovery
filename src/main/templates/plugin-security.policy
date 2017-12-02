@@ -2,4 +2,5 @@ grant {
     permission java.lang.RuntimePermission "accessDeclaredMembers";
     // Needed for GSON serialization
     permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
+    permission java.net.SocketPermission "*", "connect";
 };

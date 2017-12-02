@@ -117,6 +117,8 @@ public class ConsulUnicastHostsProvider extends AbstractComponent implements Uni
             logger.debug("{} ms it took for discovery request", (System.currentTimeMillis() - startTime));
         } catch (IOException ioException) {
             logger.error("Failed to discover nodes, failed in making consul based " + "discovery", ioException);
+        } catch (java.security.PrivilegedActionException privilegeException){
+            logger.error("Failed to discover nodes, due to security privileges", privilegeException);
         }
 
         if (consulDiscoveryResults != null) {

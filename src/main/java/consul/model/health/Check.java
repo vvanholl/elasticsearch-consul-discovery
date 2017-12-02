@@ -46,17 +46,34 @@ package consul.model.health;
  * Created by Jigar Joshi on 8/9/15.
  */
 
+import com.google.gson.annotations.*;
+
 /**
  * Consul check class.
  */
 public class Check {
+    @SerializedName("CheckID")
     private String checkID;
+
+    @SerializedName("Name")
     private String name;
+
+    @SerializedName("Node")
     private String node;
+
+    @SerializedName("Notes")
     private String notes;
+
+    @SerializedName("Output")
     private String output;
+
+    @SerializedName("ServiceID")
     private String serviceID;
+
+    @SerializedName("ServiceName")
     private String serviceName;
+
+    @SerializedName("Status")
     private String status;
 
     public String getCheckID() {

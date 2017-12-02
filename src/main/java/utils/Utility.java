@@ -59,15 +59,23 @@ public class Utility {
      * @param urlString url to read the content from (for example: http://www.google.com
      * @return response returned in form of String
      * @throws IOException if fails to parse URL, make call to URL
+     * @throws java.security.PrivilegedActionException when security issues
      */
-    public static String readUrl(String urlString) throws IOException {
+    public static String readUrl(String urlString) throws IOException, java.security.PrivilegedActionException {
         StringBuffer result = new StringBuffer();
         BufferedReader br = null;
         InputStream inputStream = null;
         try {
             URL url = new URL(urlString);
             URLConnection urlConnection = url.openConnection();
-            inputStream = urlConnection.getInputStream();
+            inputStream = (InputStream) java.security.AccessController.doPrivileged(
+                    new java.security.PrivilegedExceptionAction<InputStream>() {
+                        @Override
+                        public InputStream run() throws IOException{
+                            return urlConnection.getInputStream();
+                        }
+                    }
+            );
             br = new BufferedReader(new InputStreamReader(inputStream));
             String line;
             while ((line = br.readLine()) != null) {

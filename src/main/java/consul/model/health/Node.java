@@ -46,11 +46,16 @@ package consul.model.health;
  * Created by Jigar Joshi on 8/9/15.
  */
 
+import com.google.gson.annotations.*;
+
 /**
  * Consul node class.
  */
 public class Node {
+    @SerializedName("Address")
     private String address;
+
+    @SerializedName("Node")
     private String node;
 
     public String getAddress() {
