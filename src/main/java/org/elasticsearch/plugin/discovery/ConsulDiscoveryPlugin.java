@@ -46,34 +46,26 @@ package org.elasticsearch.plugin.discovery;
  */
 
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.cluster.service.ClusterService;
-import org.elasticsearch.common.io.stream.NamedWriteableRegistry;
-import org.elasticsearch.common.logging.DeprecationLogger;
 import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.network.NetworkService;
 import org.elasticsearch.common.settings.Setting;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.discovery.Discovery;
-import org.elasticsearch.discovery.DiscoveryModule;
 import org.elasticsearch.discovery.consul.ConsulUnicastHostsProvider;
 import org.elasticsearch.discovery.zen.UnicastHostsProvider;
-import org.elasticsearch.discovery.zen.ZenDiscovery;
 import org.elasticsearch.plugins.DiscoveryPlugin;
 import org.elasticsearch.plugins.Plugin;
-import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportService;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+/**
+ * Consul Discovery plugin class.
+ */
 public class ConsulDiscoveryPlugin extends Plugin implements DiscoveryPlugin {
-    public static final String CONSUL = "consul";
-
     private static final Logger logger = Loggers.getLogger(ConsulDiscoveryPlugin.class);
-    private static final DeprecationLogger deprecationLogger = new DeprecationLogger(logger);
 
     private final Settings settings;
 
@@ -83,14 +75,10 @@ public class ConsulDiscoveryPlugin extends Plugin implements DiscoveryPlugin {
     }
 
     @Override
-    public Map<String, Supplier<Discovery>> getDiscoveryTypes(ThreadPool threadPool, TransportService transportService, NamedWriteableRegistry namedWriteableRegistry, ClusterService clusterService, UnicastHostsProvider hostsProvider) {
-        return Collections.singletonMap(CONSUL, () -> new ZenDiscovery(settings, threadPool, transportService, namedWriteableRegistry, clusterService, hostsProvider));
-    }
-
-    @Override
-    public Map<String, Supplier<UnicastHostsProvider>> getZenHostsProviders(TransportService transportService, NetworkService networkService) {
+    public Map<String, Supplier<UnicastHostsProvider>> getZenHostsProviders(TransportService transportService,
+                                                                            NetworkService networkService) {
         return Collections.singletonMap(
-                CONSUL,
+                "consul",
                 () -> {
                     return new ConsulUnicastHostsProvider(settings, transportService);
                 });
@@ -106,19 +94,4 @@ public class ConsulDiscoveryPlugin extends Plugin implements DiscoveryPlugin {
                 ConsulUnicastHostsProvider.CONSUL_HEALTHY
         );
     }
-
-    @Override
-    public Settings additionalSettings() {
-        String discoveryType = DiscoveryModule.DISCOVERY_TYPE_SETTING.get(settings);
-        if (discoveryType.equals(CONSUL)) {
-            deprecationLogger.deprecated("Using " + DiscoveryModule.DISCOVERY_TYPE_SETTING.getKey() +
-                    " setting to set hosts provider is deprecated. " +
-                    "Set \"" + DiscoveryModule.DISCOVERY_HOSTS_PROVIDER_SETTING.getKey() + ": " + CONSUL + "\" instead");
-            if (DiscoveryModule.DISCOVERY_HOSTS_PROVIDER_SETTING.exists(settings) == false) {
-                return Settings.builder().put(DiscoveryModule.DISCOVERY_HOSTS_PROVIDER_SETTING.getKey(), CONSUL).build();
-            }
-        }
-        return Settings.EMPTY;
-    }
-
 }

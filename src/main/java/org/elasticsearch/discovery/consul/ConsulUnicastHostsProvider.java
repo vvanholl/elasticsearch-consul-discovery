@@ -45,8 +45,7 @@ package org.elasticsearch.discovery.consul;
  * Created by Jigar Joshi on 8/9/15.
  */
 
-import consul.model.DiscoveryResult;
-import consul.service.ConsulService;
+import static java.util.Collections.emptyList;
 import org.elasticsearch.Version;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.common.component.AbstractComponent;
@@ -56,20 +55,29 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.discovery.zen.UnicastHostsProvider;
 import org.elasticsearch.transport.TransportService;
-
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
+import consul.model.DiscoveryResult;
+import consul.service.ConsulService;
 
-import static java.util.Collections.emptyList;
-
+/**
+ * Consul unicast host provider class.
+ */
 public class ConsulUnicastHostsProvider extends AbstractComponent implements UnicastHostsProvider {
 
-    public static final Setting<String> CONSUL_LOCALWSHOST = Setting.simpleString("discovery.consul.local-ws-host", Property.NodeScope);
-    public static final Setting<Integer> CONSUL_LOCALWSPORT = Setting.intSetting("discovery.consul.local-ws-port", 8500, Property.NodeScope);
-    public static final Setting<List<String>> CONSUL_SERVICENAMES = Setting.listSetting("discovery.consul.service-names", emptyList(), Function.identity(), Property.NodeScope);
+    public static final Setting<String> CONSUL_LOCALWSHOST = Setting.simpleString("discovery.consul.local-ws-host",
+            Property.NodeScope);
+    public static final Setting<Integer> CONSUL_LOCALWSPORT = Setting.intSetting("discovery.consul.local-ws-port", 8500,
+            Property.NodeScope);
+    public static final Setting<List<String>> CONSUL_SERVICENAMES = Setting.listSetting("discovery.consul.service-names",
+            emptyList(), Function.identity(), Property.NodeScope);
     public static final Setting<String> CONSUL_TAG = Setting.simpleString("discovery.consul.tag", Property.NodeScope);
-    public static final Setting<Boolean> CONSUL_HEALTHY = Setting.boolSetting("discovery.consul.healthy", true, Property.NodeScope);
+    public static final Setting<Boolean> CONSUL_HEALTHY = Setting.boolSetting("discovery.consul.healthy", true,
+            Property.NodeScope);
 
     private final TransportService transportService;
     private final Set<String> consulServiceNames;
@@ -103,7 +111,8 @@ public class ConsulUnicastHostsProvider extends AbstractComponent implements Uni
         try {
             logger.debug("Starting discovery request");
             final long startTime = System.currentTimeMillis();
-            consulDiscoveryResults = new ConsulService( this.consulAgentLocalWebServiceHost, this.consulAgentLocalWebServicePort, this.tag, this.healthy).discoverNodes(this.consulServiceNames);
+            consulDiscoveryResults = new ConsulService(this.consulAgentLocalWebServiceHost,
+                    this.consulAgentLocalWebServicePort, this.tag, this.healthy).discoverNodes(this.consulServiceNames);
             logger.debug("Discovered {} nodes", (consulDiscoveryResults != null ? consulDiscoveryResults.size() : 0));
             logger.debug("{} ms it took for discovery request", (System.currentTimeMillis() - startTime));
         } catch (IOException ioException) {
@@ -116,7 +125,8 @@ public class ConsulUnicastHostsProvider extends AbstractComponent implements Uni
                 try {
                     TransportAddress[] addresses = transportService.addressesFromString(address, 1);
                     logger.debug("Adding {}, transport_address {}", address, addresses[0]);
-                    discoNodes.add(new DiscoveryNode("#consul-" + address, addresses[0], Version.CURRENT.minimumCompatibilityVersion()));
+                    discoNodes.add(new DiscoveryNode("#consul-" + address, addresses[0],
+                            Version.CURRENT.minimumCompatibilityVersion()));
                 } catch (Exception e) {
                     logger.warn("Failed to add {}, address {}", e, address);
                 }

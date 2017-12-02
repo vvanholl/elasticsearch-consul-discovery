@@ -1,5 +1,5 @@
-
 package consul.model.health;
+
 /**
  * Copyright © 2015 Lithium Technologies, Inc. All rights reserved subject to the terms of
  * the MIT License located at
@@ -45,85 +45,97 @@ package consul.model.health;
  *
  * Created by Jigar Joshi on 8/9/15.
  */
+
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Consul service class.
+ */
 public class Service {
+    private String address;
+    private String id;
+    private Integer port;
+    private String service;
+    private List<String> tags = new ArrayList<>();
 
-	private String Address;
-	private String ID;
-	private Integer Port;
-	private String Service;
-	private List<String> Tags = new ArrayList<>();
+    public String getAddress() {
+        return address;
+    }
 
-	public String getAddress() {
-		return Address;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	public void setAddress(String Address) {
-		this.Address = Address;
-	}
+    public String getID() {
+        return id;
+    }
 
-	public String getID() {
-		return ID;
-	}
+    public void setID(String id) {
+        this.id = id;
+    }
 
-	public void setID(String ID) {
-		this.ID = ID;
-	}
+    public Integer getPort() {
+        return port;
+    }
 
-	public Integer getPort() {
-		return Port;
-	}
+    public void setPort(Integer port) {
+        this.port = port;
+    }
 
-	public void setPort(Integer Port) {
-		this.Port = Port;
-	}
+    public String getService() {
+        return service;
+    }
 
-	public String getService() {
-		return Service;
-	}
+    public void setService(String service) {
+        this.service = service;
+    }
 
+    public List<String> getTags() {
+        return tags;
+    }
 
-	public void setService(String Service) {
-		this.Service = Service;
-	}
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
 
-	public List<String> getTags() {
-		return Tags;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-	public void setTags(List<String> Tags) {
-		this.Tags = Tags;
-	}
+        Service service = (Service) o;
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+        if (address != null ? !address.equals(service.address) : service.address != null) {
+            return false;
+        }
+        if (id != null ? !id.equals(service.id) : service.id != null) {
+            return false;
+        }
+        if (port != null ? !port.equals(service.port) : service.port != null) {
+            return false;
+        }
+        if (this.service != null ? !this.service.equals(service.service) : service.service != null) {
+            return false;
+        }
+        if (tags != null ? !tags.equals(service.tags) : service.tags != null) {
+            return false;
+        }
 
-		Service service = (Service) o;
+        return true;
+    }
 
-		if (Address != null ? !Address.equals(service.Address) : service.Address != null)
-			return false;
-		if (ID != null ? !ID.equals(service.ID) : service.ID != null) return false;
-		if (Port != null ? !Port.equals(service.Port) : service.Port != null)
-			return false;
-		if (Service != null ? !Service.equals(service.Service) : service.Service != null)
-			return false;
-		if (Tags != null ? !Tags.equals(service.Tags) : service.Tags != null)
-			return false;
-
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = Address != null ? Address.hashCode() : 0;
-		result = 31 * result + (ID != null ? ID.hashCode() : 0);
-		result = 31 * result + (Port != null ? Port.hashCode() : 0);
-		result = 31 * result + (Service != null ? Service.hashCode() : 0);
-		result = 31 * result + (Tags != null ? Tags.hashCode() : 0);
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        int result = address != null ? address.hashCode() : 0;
+        result = 31 * result + (id != null ? id.hashCode() : 0);
+        result = 31 * result + (port != null ? port.hashCode() : 0);
+        result = 31 * result + (service != null ? service.hashCode() : 0);
+        result = 31 * result + (tags != null ? tags.hashCode() : 0);
+        return result;
+    }
 }
