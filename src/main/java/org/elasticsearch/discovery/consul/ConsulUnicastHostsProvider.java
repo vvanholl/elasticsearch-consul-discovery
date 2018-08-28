@@ -102,10 +102,10 @@ public class ConsulUnicastHostsProvider extends AbstractComponent implements Uni
     }
 
     @Override
-    public List<DiscoveryNode> buildDynamicNodes() {
+    public List<TransportAddress> buildDynamicHosts(HostsResolver hostsResolver) {
         logger.debug("Discovering nodes");
 
-        List<DiscoveryNode> discoNodes = new ArrayList<DiscoveryNode>();
+        List<TransportAddress> discoNodes = new ArrayList<TransportAddress>();
         Set<DiscoveryResult> consulDiscoveryResults = null;
 
         try {
@@ -127,8 +127,8 @@ public class ConsulUnicastHostsProvider extends AbstractComponent implements Uni
                 try {
                     TransportAddress[] addresses = transportService.addressesFromString(address, 1);
                     logger.debug("Adding {}, transport_address {}", address, addresses[0]);
-                    discoNodes.add(new DiscoveryNode("#consul-" + address, addresses[0],
-                            Version.CURRENT.minimumCompatibilityVersion()));
+                    discoNodes.add(addresses[0]);
+
                 } catch (Exception e) {
                     logger.warn("Failed to add {}, address {}", e, address);
                 }
