@@ -1,4 +1,4 @@
-Consul Based Discovery Plugin for Elasticsearch
+TEST Consul Based Discovery Plugin for Elasticsearch
 ===============================================
 
 Uses [Consul](https://consul.io) API for Elasticsearch discovery
