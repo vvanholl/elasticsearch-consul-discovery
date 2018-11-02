@@ -1,4 +1,5 @@
-[![pipeline status](https://gitlab.com/vvanholl/elasticsearch-consul-discovery/badges/master/pipeline.svg)](https://gitlab.com/vvanholl/elasticsearch-consul-discovery/commits/master)[![coverage report](https://gitlab.com/vvanholl/elasticsearch-consul-discovery/badges/master/coverage.svg)](https://gitlab.com/vvanholl/elasticsearch-consul-discovery/commits/master)
+[![pipeline status](https://gitlab.com/vvanholl/elasticsearch-consul-discovery/badges/master/pipeline.svg)](https://gitlab.com/vvanholl/elasticsearch-consul-discovery/commits/master) [![coverage report](https://gitlab.com/vvanholl/elasticsearch-consul-discovery/badges/master/coverage.svg)](https://gitlab.com/vvanholl/elasticsearch-consul-discovery/commits/master)
+
 Consul Based Discovery Plugin for Elasticsearch
 ===============================================
 
