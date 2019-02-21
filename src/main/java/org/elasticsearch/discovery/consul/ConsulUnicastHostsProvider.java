@@ -87,7 +87,6 @@ public class ConsulUnicastHostsProvider extends AbstractComponent implements Uni
     private final boolean healthy;
 
     public ConsulUnicastHostsProvider(Settings settings, TransportService transportService) {
-        super(settings);
         this.transportService = transportService;
 
         this.consulServiceNames = new HashSet<>();
