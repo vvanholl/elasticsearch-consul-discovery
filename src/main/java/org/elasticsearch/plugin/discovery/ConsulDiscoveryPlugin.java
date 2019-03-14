@@ -45,8 +45,8 @@ package org.elasticsearch.plugin.discovery;
  * Created by Jigar Joshi on 8/9/15.
  */
 
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.network.NetworkService;
 import org.elasticsearch.common.settings.Setting;
 import org.elasticsearch.common.settings.Settings;
@@ -65,7 +65,7 @@ import java.util.function.Supplier;
  * Consul Discovery plugin class.
  */
 public class ConsulDiscoveryPlugin extends Plugin implements DiscoveryPlugin {
-    private static final Logger logger = Loggers.getLogger(ConsulDiscoveryPlugin.class);
+    private static Logger logger = LogManager.getLogger(ConsulDiscoveryPlugin.class);
 
     private final Settings settings;
 
