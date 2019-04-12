@@ -14,7 +14,7 @@ The plugin zip archive will be under build/distributions/
 ## Installation
 
 ```
-./bin/elasticsearch-plugin install -b https://distfiles.compuscene.net/elasticsearch/elasticsearch-consul-discovery-5.5.2.0.zip
+./bin/elasticsearch-plugin install -b https://github.com/vvanholl/elasticsearch-consul-discovery/releases/download/6.7.1.0/elasticsearch-consul-discovery-6.7.1.0.zip
 ```
 
 **Do not forget to restart the node after installation !**
