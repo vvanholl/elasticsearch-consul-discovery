@@ -122,7 +122,12 @@ public class ConsulUnicastHostsProvider extends AbstractComponent implements Uni
 
         if (consulDiscoveryResults != null) {
             consulDiscoveryResults.stream().forEach(discoveryResult -> {
-                String address = discoveryResult.getIp() + ":" + discoveryResult.getPort();
+                String address;
+                if (discoveryResult.getIp().contains(":")) {
+                    address = "[" + discoveryResult.getIp() + "]:" + discoveryResult.getPort();
+                } else {
+                    address = discoveryResult.getIp() + ":" + discoveryResult.getPort();
+                }
                 try {
                     TransportAddress[] addresses = transportService.addressesFromString(address, 1);
                     logger.debug("Adding {}, transport_address {}", address, addresses[0]);
