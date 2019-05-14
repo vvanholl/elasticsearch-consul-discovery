@@ -31,9 +31,9 @@ repositories {
 ext {
     versions = [
         "elasticsearch": version.replaceAll(/\.[0-9]+(|-SNAPSHOT)$/, ""),
-        "gson"   : "2.3.1",
-        "log4j"        : "2.6.2",
-        "junit"        : "4.12"
+        "gson": "2.3.1",
+        "log4j": "2.6.2",
+        "junit": "4.12"
     ]
 }
 
