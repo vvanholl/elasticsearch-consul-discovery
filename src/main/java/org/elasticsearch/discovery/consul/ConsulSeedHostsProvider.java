@@ -46,14 +46,15 @@ package org.elasticsearch.discovery.consul;
  */
 
 import static java.util.Collections.emptyList;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.Version;
 import org.elasticsearch.cluster.node.DiscoveryNode;
-import org.elasticsearch.common.component.AbstractComponent;
 import org.elasticsearch.common.settings.Setting;
 import org.elasticsearch.common.settings.Setting.Property;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
-import org.elasticsearch.discovery.zen.UnicastHostsProvider;
+import org.elasticsearch.discovery.SeedHostsProvider;
 import org.elasticsearch.transport.TransportService;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,9 +66,11 @@ import consul.model.DiscoveryResult;
 import consul.service.ConsulService;
 
 /**
- * Consul unicast host provider class.
- */
-public class ConsulUnicastHostsProvider extends AbstractComponent implements UnicastHostsProvider {
+ Consul seed host provider class.
+**/
+public class ConsulSeedHostsProvider implements SeedHostsProvider {
+
+    private static Logger logger = LogManager.getLogger(ConsulUnicastHostsProvider.class);
 
     public static final Setting<String> CONSUL_LOCALWSHOST = Setting.simpleString("discovery.consul.local-ws-host",
             Property.NodeScope);
@@ -101,7 +104,7 @@ public class ConsulUnicastHostsProvider extends AbstractComponent implements Uni
     }
 
     @Override
-    public List<TransportAddress> buildDynamicHosts(HostsResolver hostsResolver) {
+    public List<TransportAddress> getSeedAddresses(HostsResolver hostsResolver) {
         logger.debug("Discovering nodes");
 
         List<TransportAddress> discoNodes = new ArrayList<TransportAddress>();

@@ -50,8 +50,8 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.network.NetworkService;
 import org.elasticsearch.common.settings.Setting;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.discovery.consul.ConsulUnicastHostsProvider;
-import org.elasticsearch.discovery.zen.UnicastHostsProvider;
+import org.elasticsearch.discovery.consul.ConsulSeedHostsProvider;
+import org.elasticsearch.discovery.SeedHostsProvider;
 import org.elasticsearch.plugins.DiscoveryPlugin;
 import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.transport.TransportService;
@@ -75,12 +75,12 @@ public class ConsulDiscoveryPlugin extends Plugin implements DiscoveryPlugin {
     }
 
     @Override
-    public Map<String, Supplier<UnicastHostsProvider>> getZenHostsProviders(TransportService transportService,
+    public Map<String, Supplier<SeedHostsProvider>> getSeedHostProviders(TransportService transportService,
                                                                             NetworkService networkService) {
         return Collections.singletonMap(
                 "consul",
                 () -> {
-                    return new ConsulUnicastHostsProvider(settings, transportService);
+                    return new ConsulSeedHostsProvider(settings, transportService);
                 });
     }
 
