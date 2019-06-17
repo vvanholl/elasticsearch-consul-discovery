@@ -23,7 +23,7 @@ The plugin zip archive will be under build/distributions/
 
 ```
 discovery:
-  discovery.zen.hosts_provider: consul
+  discovery.seed_hosts: consul
   consul:
     service-names: ["CONSUL_SERVICE_NAME1", "CONSUL_SERVICE_NAME2"]
     healthy: true
