@@ -13,7 +13,6 @@ plugins {
     id "java"
     id "checkstyle"
     id "co.riiid.gradle" version "0.4.2"
-    id "com.github.mgk.gradle.s3" version "1.4.0"
 }
 
 sourceCompatibility = 1.8
@@ -32,9 +31,9 @@ repositories {
 ext {
     versions = [
         "elasticsearch": version.replaceAll(/\.[0-9]+(|-SNAPSHOT)$/, ""),
-        "gson"   : "2.3.1",
-        "log4j"        : "2.6.2",
-        "junit"        : "4.12"
+        "gson": "2.3.1",
+        "log4j": "2.6.2",
+        "junit": "4.12"
     ]
 }
 
@@ -105,10 +104,22 @@ checkstyle {
     toolVersion = "8.2"
 }
 
-task S3Upload(type: S3Upload, dependsOn: buildPluginZip) {
-    bucket = s3_bucket
-    key = "elasticsearch/${project.name}-${version}.zip"
-    file = "build/distributions/${project.name}-${version}.zip"
+def getGitCommitHash() {
+    def gitFolderPath = "$projectDir/.git/"
+    def gitFolder = new File(gitFolderPath + "HEAD");
+    if (!gitFolder.exists()) {
+        return null
+    }
+
+    def head = gitFolder.text.split(":")
+    def isCommit = (head.length == 1)
+
+    if (isCommit) {
+        return head[0].trim()
+    }
+
+    def refHead = new File(gitFolderPath + head[1].trim())
+    return refHead.text.trim()
 }
 
 github {
@@ -116,7 +127,7 @@ github {
     repo = github_repo
     token = github_token
     tagName = version
-    targetCommitish = "master"
+    targetCommitish = getGitCommitHash()
     name = version
     assets = [
         "build/distributions/${project.name}-${version}.zip"
@@ -125,7 +136,6 @@ github {
 
 githubRelease {
     dependsOn("buildPluginZip")
-    mustRunAfter("S3Upload")
 }
 
 task release() {
@@ -134,6 +144,6 @@ task release() {
             println("SNAPSHOT: Nothing to release !")
         }
     } else {
-        dependsOn(["S3Upload", "githubRelease"])
+        dependsOn(["githubRelease"])
     }
 }
